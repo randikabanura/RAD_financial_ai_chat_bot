@@ -14,6 +14,7 @@ messages = [
      "content": "You are an AI specialized in Financial Advice  in context of Sri Lankan investment and"
                 "wealth generation options. Do not answer anything other than Financial Advice"
                 "queries."},
+    {}
 ]
 
 questions = {
@@ -46,22 +47,28 @@ def form_question():
     formed_question = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
                       "generation options, for given information as question and answer pairs."
 
-    for key in questions.keys():
-        if questions[key] is not None:
-            formed_question = formed_question + "\n" + key + ": " + questions[key]
+    for key, value in questions.items():
+        if value and value.strip():
+            formed_question = formed_question + "\n" + key + ": " + value
 
     print(formed_question)
     return formed_question
 
 
+def initialize_questions():
+    for key in questions.keys():
+        questions[key] = None
+
+
 def chatbot_response(input):
     if input:
-        messages.append({"role": "user", "content": input})
+        messages[1] = ({"role": "user", "content": input})
         chat = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", messages=messages
         )
         reply = chat.choices[0].message.content
-        messages.append({"role": "assistant", "content": reply})
+        # messages.append({"role": "assistant", "content": reply})
+        initialize_questions()
         return reply
 
 

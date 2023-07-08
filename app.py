@@ -44,7 +44,7 @@ initial_message = "Hello! I'm here to support you for investment and financial d
 def form_question():
     formed_question = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
                       "generation options, for given information as question and answer pairs. Report should consists " \
-                      "of minimum of 500 words and maximum words 1500.\n"
+                      "of minimum of 500 words and maximum 1500 words.\n"
 
     for key in questions.keys():
         if questions[key] is not None:
@@ -56,11 +56,14 @@ def form_question():
 
 def chatbot_response(input):
     if input:
-        messages.append({"role": "user", "content": input})
-        chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
-        reply = chat.choices[0].message.content
-        messages.append({"role": "assistant", "content": reply})
-        return reply
+        try:
+            messages.append({"role": "user", "content": input})
+            chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+            reply = chat.choices[0].message.content
+            messages.append({"role": "assistant", "content": reply})
+            return reply
+        except:
+            return "Something went wrong!"
 
 
 with gr.Blocks() as demo:
@@ -69,6 +72,7 @@ with gr.Blocks() as demo:
     chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)
     msg = gr.Textbox()
     clear = gr.ClearButton([msg, chatbot])
+
 
     def respond(message, chat_history):
         for item in questions.keys():

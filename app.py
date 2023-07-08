@@ -65,8 +65,8 @@ initial_message_english = "Hello! I'm here to support you for investment and fin
 initial_message_sinhala = "ආයුබෝවන්! ආයෝජන සහ මූල්‍ය තීරණ ගැනීම සඳහා ඔබට සහාය වීමට මම මෙහි සිටිමි. මම ශ්‍රී ලංකාවේ " \
                           "ආයෝජන සහ ධන උත්පාදන විකල්පයන් සම්බන්ධයෙන් මූල්‍ය උපදෙස් පිළිබඳ කෘත්‍ය බුද්ධි මෙවලමකි."
 
-report_heading_english = "Financial Advice Report \n======================================"
-report_heading_sinhala = "මූල්‍ය උපදෙස් වාර්තාව \n======================================"
+report_heading_english = "Financial Advice Report -------------------------------------- \n"
+report_heading_sinhala = "මූල්‍ය උපදෙස් වාර්තාව -------------------------------------- \n"
 
 
 language_input_var = None
@@ -124,8 +124,12 @@ def form_question():
 
 
 def initialize_questions():
-    global questions
-    questions = {}
+    global questions_english
+    global questions_sinhala
+    for key in questions_english.keys():
+        questions_english[key] = None
+    for key in questions_sinhala.keys():
+        questions_sinhala[key] = None
 
 
 def chatbot_response(input):
@@ -138,7 +142,6 @@ def chatbot_response(input):
             reply = chat.choices[0].message.content
 
             initialize_questions()
-
             if language_input_var == 'English':
                 reply = report_heading_english + reply
             elif language_input_var == 'සිංහල':
@@ -151,11 +154,14 @@ def chatbot_response(input):
 
 
 def respond(message, chat_history):
+    global questions
     initial_message = ""
     if language_input_var == 'English':
         initial_message = initial_message_english
+        questions = questions_english
     elif language_input_var == 'සිංහල':
         initial_message = initial_message_sinhala
+        questions = questions_sinhala
 
     for item in questions.keys():
         if questions[item] is None:
@@ -177,11 +183,14 @@ def respond(message, chat_history):
 
 
 def clear_chatbot(message, chat_history):
+    global questions
     initial_message = ""
     if language_input_var == 'English':
         initial_message = initial_message_english
+        questions = questions_english
     elif language_input_var == 'සිංහල':
         initial_message = initial_message_sinhala
+        questions = questions_sinhala
     chat_history.clear()
     chat_history.append((None, initial_message))
     chat_history.append((None, list(questions.keys())[0]))

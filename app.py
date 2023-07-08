@@ -45,7 +45,7 @@ initial_message = "Hello! I'm here to support you for investment and financial d
 def form_question():
     formed_question = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
                       "generation options, for given information as question and answer pairs. Report should consists " \
-                      "of minimum of 1000 words and maximum 1500 words.\n"
+                      "of minimum of 1000 words and maximum 2000 words.\n"
 
     for key, value in questions.items():
         if value and value.strip():
@@ -81,7 +81,7 @@ with gr.Blocks() as demo:
 
     chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)
     msg = gr.Textbox()
-    clear = gr.ClearButton([msg, chatbot])
+    btn = gr.Button(value="Clear")
 
     def respond(message, chat_history):
         for item in questions.keys():
@@ -98,10 +98,17 @@ with gr.Blocks() as demo:
         processed_message = form_question()
         bot_message = chatbot_response(processed_message)
         chat_history.append((message, bot_message))
-        time.sleep(8)
+        chat_history.append((None, initial_message))
+        chat_history.append((None, list(questions.keys())[0]))
         return "", chat_history
 
+    def clear_chatbot(message, chat_history):
+        chat_history.clear()
+        chat_history.append((None, initial_message))
+        chat_history.append((None, list(questions.keys())[0]))
+        return "", chat_history
 
+    btn.click(clear_chatbot, inputs=[msg, chatbot], outputs=[msg, chatbot])
     msg.submit(respond, [msg, chatbot], [msg, chatbot], scroll_to_output=True)
 
 if __name__ == "__main__":

@@ -1,13 +1,14 @@
 import openai
 import gradio as gr
+import random
+import time
 
-openai.api_key = "enter your key"
+openai.api_key = "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"
 
 messages = [
     {"role": "system", "content": "You are a helpful and kind AI Assistant."},
 ]
-
-def chatbot(input):
+def chatbot_response(input):
     if input:
         messages.append({"role": "user", "content": input})
         chat = openai.ChatCompletion.create(
@@ -17,9 +18,18 @@ def chatbot(input):
         messages.append({"role": "assistant", "content": reply})
         return reply
 
-inputs = gr.inputs.Textbox(lines=7, label="Chat with AI")
-outputs = gr.outputs.Textbox(label="Reply")
+with gr.Blocks() as demo:
+    chatbot = gr.Chatbot()
+    msg = gr.Textbox()
+    clear = gr.ClearButton([msg, chatbot])
 
-gr.Interface(fn=chatbot, inputs=inputs, outputs=outputs, title="AI Chatbot",
-             description="Ask anything you want",
-             theme="compact").launch(share=True)
+    def respond(message, chat_history):
+        bot_message = chatbot_response(message)
+        chat_history.append((message, bot_message))
+        time.sleep(2)
+        return "", chat_history
+
+    msg.submit(respond, [msg, chatbot], [msg, chatbot])
+
+if __name__ == "__main__":
+    demo.launch()

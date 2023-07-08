@@ -1,8 +1,13 @@
 import openai
 import gradio as gr
 import time
+import os
+from dotenv import load_dotenv
 
-openai.api_key = ""
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+openai.api_key = OPENAI_API_KEY
 
 messages = [
     {"role": "system",

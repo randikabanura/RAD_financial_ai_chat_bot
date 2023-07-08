@@ -46,24 +46,29 @@ def form_question():
                       "generation options, for given information as question and answer pairs. Report should consists " \
                       "of minimum of 500 words and maximum 1500 words.\n"
 
-    for key in questions.keys():
-        if questions[key] is not None:
-            formed_question = formed_question + "\n" + key + ": " + questions[key]
+    for key, value in questions.items():
+        if value and value.strip():
+            formed_question = formed_question + "\n" + key + ": " + value
 
     print(formed_question)
     return formed_question
 
 
+def initialize_questions():
+    for key in questions.keys():
+        questions[key] = None
+
+
 def chatbot_response(input):
     if input:
-        try:
-            messages.append({"role": "user", "content": input})
-            chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
-            reply = chat.choices[0].message.content
-            messages.append({"role": "assistant", "content": reply})
-            return reply
-        except:
-            return "Something went wrong!"
+        messages[1] = ({"role": "user", "content": input})
+        chat = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", messages=messages
+        )
+        reply = chat.choices[0].message.content
+
+        initialize_questions()
+        return reply
 
 
 with gr.Blocks() as demo:

@@ -61,7 +61,7 @@ def initialize_questions():
 
 def chatbot_response(input):
     if input:
-        messages[1] = ({"role": "user", "content": input})
+        messages[1] = {"role": "user", "content": input}
         chat = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", messages=messages
         )

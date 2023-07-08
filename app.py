@@ -1,13 +1,15 @@
+import configparser
 import openai
 import gradio as gr
 import time
 import os
 from dotenv import load_dotenv
+from encryption_decryption import decrypt_value
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-openai.api_key = OPENAI_API_KEY
+# OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+openai.api_key = ""
 
 messages = [
     {"role": "system",
@@ -68,6 +70,18 @@ language_input = None
 
 questionnaire_english = gr.Chatbot(value=[[None, initial_message], [None, list(questions_english.keys())[0]]], height=600)
 questionnaire_sinhala = gr.Chatbot(value=[[None, initial_message], [None, list(questions_sinhala.keys())[0]]], height=600)
+
+
+def read_openapi_key():
+    # Create a ConfigParser object
+    config = configparser.ConfigParser()
+    # Read the properties file
+    config.read('config.properties')
+    # Get encryption key from properties file
+    encryption_key = config.get('encryption', 'key')
+    # Get encrypted value from properties file
+    encrypted_value = config.get('encrypted', 'value')
+    return decrypt_value(encryption_key.encode(), encrypted_value)
 
 
 def filter(choice):
@@ -181,4 +195,5 @@ with gr.Blocks() as demo:
     # chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)
 
 if __name__ == "__main__":
+    openai.api_key = read_openapi_key()
     demo.launch()

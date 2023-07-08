@@ -61,14 +61,17 @@ def initialize_questions():
 
 def chatbot_response(input):
     if input:
-        messages[1] = {"role": "user", "content": input}
-        chat = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=messages
-        )
-        reply = chat.choices[0].message.content
+        try:
+            messages[1] = {"role": "user", "content": input}
+            chat = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo", messages=messages, timeout=60
+            )
+            reply = chat.choices[0].message.content
 
-        initialize_questions()
-        return reply
+            initialize_questions()
+            return reply
+        except:
+            return "Something went wrong!"
 
 
 with gr.Blocks() as demo:
@@ -88,13 +91,13 @@ with gr.Blocks() as demo:
         for item in questions.keys():
             if questions[item] is None:
                 chat_history.append((message, item))
-                time.sleep(2)
+                time.sleep(1)
                 return "", chat_history
 
         processed_message = form_question()
         bot_message = chatbot_response(processed_message)
         chat_history.append((message, bot_message))
-        time.sleep(2)
+        time.sleep(8)
         return "", chat_history
 
 

@@ -13,6 +13,7 @@ messages = [
     {"role": "system",
      "content": "You are an AI specialized in Financial Advice  in context of Sri Lankan investment and"
                 "wealth generation options."},
+    {}
 ]
 
 questions = {
@@ -23,8 +24,8 @@ questions = {
     "How much capital do you have available for investment?": None,
     "Are you looking for a one time investment plan or a recursive investment plan?": None,
     "Are you looking for short-term gains or long-term investment opportunities?": None,
-    "What is your current income level and financial stability": None,
-    "Do you have any existing debts or financial commitments that need to be considered": None,
+    "What is your current income level and financial stability?": None,
+    "Do you have any existing debts or financial commitments that need to be considered?": None,
     "Are you interested in specific investment types such as real estate, stocks, bonds, mutual funds, or other "
     "options?": None,
     "Do you have any specific industries or sectors you want to focus on?": None,
@@ -44,7 +45,7 @@ initial_message = "Hello! I'm here to support you for investment and financial d
 def form_question():
     formed_question = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
                       "generation options, for given information as question and answer pairs. Report should consists " \
-                      "of minimum of 500 words and maximum 1500 words.\n"
+                      "of minimum of 1000 words and maximum 1500 words.\n"
 
     for key, value in questions.items():
         if value and value.strip():
@@ -64,13 +65,14 @@ def chatbot_response(input):
         try:
             messages[1] = {"role": "user", "content": input}
             chat = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo", messages=messages, timeout=60
+                model="gpt-3.5-turbo", messages=messages
             )
             reply = chat.choices[0].message.content
 
             initialize_questions()
             return reply
-        except:
+        except Exception as e:
+            print(e)
             return "Something went wrong!"
 
 
@@ -80,7 +82,6 @@ with gr.Blocks() as demo:
     chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)
     msg = gr.Textbox()
     clear = gr.ClearButton([msg, chatbot])
-
 
     def respond(message, chat_history):
         for item in questions.keys():

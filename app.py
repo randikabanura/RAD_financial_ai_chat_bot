@@ -6,8 +6,16 @@ import time
 openai.api_key = ""
 
 messages = [
-    {"role": "system", "content": "You are a helpful and kind AI Assistant."},
+    {"role": "system", "content": "You are an AI specialized in Financial Advice  in context of Sri Lankan investment and"
+                                  "wealth generation options. Do not answer anything other than food-related"
+                                  "queries."},
 ]
+
+questions = {
+    "What is langauge you prefer ?": "",
+    "Test": ""
+}
+
 def chatbot_response(input):
     if input:
         messages.append({"role": "user", "content": input})
@@ -24,6 +32,9 @@ with gr.Blocks() as demo:
     clear = gr.ClearButton([msg, chatbot])
 
     def respond(message, chat_history):
+        for item in questions.items():
+            chat_history.append((message, item.key))
+            
         bot_message = chatbot_response(message)
         chat_history.append((message, bot_message))
         time.sleep(2)

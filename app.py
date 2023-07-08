@@ -12,13 +12,14 @@ messages = [
 ]
 
 questions = {
-    "What is langauge you prefer ?": None,
+    "Please refer the language you wish to continue?": None,
     "Are you comfortable with higher-risk investments for potentially higher returns, or do you prefer lower-risk "
     "options?": None,
     "Are you aiming for long-term wealth accumulation, retirement planning, or specific short-term objectives?": None
 }
 
-initial_message = "TEST TEST"
+initial_message = "Hello! I'm here to support you for investment and financial decision making. I am an  AI " \
+                  "specialized in Financial Advice  in context of Sri Lankan investment and wealth generation options. "
 
 
 def chatbot_response(input):
@@ -33,7 +34,9 @@ def chatbot_response(input):
 
 
 with gr.Blocks() as demo:
-    chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]])
+    gr.Markdown("""# Financial ChatBot""")
+
+    chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)
     msg = gr.Textbox()
     clear = gr.ClearButton([msg, chatbot])
 

@@ -16,8 +16,9 @@ messages = [
     {}
 ]
 
-questions = {
-    "Please refer the language you wish to continue?": None,
+questions = {}
+
+questions_english = {
     "Are you comfortable with higher-risk investments for potentially higher returns, or do you prefer lower-risk "
     "options?": None,
     "Are you aiming for long-term wealth accumulation, retirement planning, or specific short-term objectives?": None,
@@ -38,14 +39,61 @@ questions = {
     "Do you have any preferences or concerns related to diversifying your investments?": None
 }
 
+questions_sinhala = {
+    "ඔබගේ රුචිකත්වය ඉහළ අවදානම් සහිත ඉහළ ප්‍රතිලාභ සඳහාද නැතහොත් අඩු අවදානම් විකල්ප සඳහාද?": None,
+    "ඔබ දිගුකාලීන ධනය ආයෝජන කිරීම, විශ්‍රාම සැලසුම් කිරීම හෝ විශේෂිත කෙටි කාලීන අරමුණු සඳහා ඉලක්ක කරන්නේද?": None,
+    "ආයෝජනය සඳහා ඔබට කොපමණ ප්‍රාග්ධනයක් තිබේද?": None,
+    "ඔබ සොයන්නේ එක් වර ආයෝජන සැලැස්මක් හෝ පුනරාවර්තන ආයෝජන සැලැස්මක් ද?": None,
+    "ඔබ සොයන්නෙ කෙටි කාලීන ආයෝජන අවස්ථාද? නැත්නම් දිගු කාලීන ආයෝජන අවස්ථාද?": None,
+    "ඔබගේ වර්තමාන ආදායම් මට්ටම සහ මූල්‍ය ස්ථාවරත්වය කුමක්ද?": None,
+    "ඔබට සලකා බැලිය යුතු පවතින ණය හෝ මූල්‍ය බැඳීම් තිබේද?": None,
+    "නිශ්චල දේපල, කොටස්, බැඳුම්කර, අන්‍යෝන්‍ය අරමුදල් හෝ වෙනත් විකල්ප වැනි විශේෂිත ආයෝජන වර්ග ගැන ඔබේ විශේෂ කැමැත්තක් "
+    "තිබේද?": None,
+    "ඔබට අවධානය යොමු කිරීමට අවශ්‍ය විශේෂිත කර්මාන්ත හෝ අංශ තිබේද?": None,
+    "ආයෝජන සහ මුල්‍ය කටයුතු සම්බන්ධයෙන් ඔබගේ දැනුම සහ අත්දැකීම් මට්ටම කුමක්ද?": None,
+    "ඔබ මීට පෙර ආයෝජනය කර තිබේද නැතහොත් ඔබ මග පෙන්වීමක් සොයන ආධුනිකයෙක්ද?": None,
+    "ඔබේ ආයෝජන තීරණවලට තිරසාරත්වය සහ සමාජ වගකීම් සාධක ඇතුළත් කිරීමට ඔබ කැමතිද?": None,
+    "ඔබ ඔබේ වටිනාකම් සමඟ ගැලපෙන සමාගම්වල ආයෝජනය කිරීමට කැමතිද?": None,
+    "බදු-කාර්යක්ෂම ආයෝජන උපාය මාර්ග සම්බන්ධයෙන් ඔබට කිසියම් කැමැත්තක් තිබේද?": None,
+    "ඔබේ ආයෝජන විවිධාංගීකරණය කිරීම සම්බන්ධයෙන් ඔබට කිසියම් කැමැත්තක් තිබේද?": None
+}
+
 initial_message = "Hello! I'm here to support you for investment and financial decision making.\nI am an AI " \
                   "specialized in Financial Advice in context of Sri Lankan investment and wealth generation options. "
 
+language_input = None
+# def disable_language_selection(language_input):
+#     language_input.interactive = False
+#     return language_input
+
+questionnaire_english = gr.Chatbot(value=[[None, initial_message], [None, list(questions_english.keys())[0]]], height=600)
+questionnaire_sinhala = gr.Chatbot(value=[[None, initial_message], [None, list(questions_sinhala.keys())[0]]], height=600)
+
+
+def filter(choice):
+    global questions
+    if choice == "English":
+        questions = questions_english
+        return [gr.update(visible=True), gr.update(visible=False)]
+    elif choice == "සිංහල":
+        questions = questions_sinhala
+        return [gr.update(visible=False), gr.update(visible=True)]
+
 
 def form_question():
-    formed_question = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
-                      "generation options, for given information as question and answer pairs. Report should consists " \
-                      "of minimum of 1000 words and maximum 2000 words.\n"
+    formed_question = ""
+    initial_message_english = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
+                              "generation options, for given information as question and answer pairs. Report should " \
+                              "consists of minimum of 1000 words and maximum 2000 words.\n"
+
+    initial_message_sinhala = "ප්‍රශ්න සහ පිළිතුරු යුගල වශයෙන් ලබා දී ඇති තොරතුරු සඳහා ශ්‍රී ලංකාවේ ආයෝජන සහ ධන " \
+                              "උත්පාදන විකල්පයන් සම්බන්ධයෙන් මුල්‍ය උපදේශන වාර්තාවක් සකස් කරන්න. වාර්තාව අවම වශයෙන් " \
+                              "වචන 1000කින් සහ උපරිම වචන 2000කින් සමන්විත විය යුතුය. \n"
+
+    if language_input == 'English':
+        formed_question = initial_message_english
+    elif language_input == 'සිංහල':
+        formed_question = initial_message_sinhala
 
     for key, value in questions.items():
         if value and value.strip():
@@ -76,40 +124,61 @@ def chatbot_response(input):
             return "Something went wrong!"
 
 
+def respond(message, chat_history):
+    for item in questions.keys():
+        if questions[item] is None:
+            questions[item] = message
+            break
+
+    for item in questions.keys():
+        if questions[item] is None:
+            chat_history.append((message, item))
+            time.sleep(1)
+            return "", chat_history
+
+    processed_message = form_question()
+    bot_message = chatbot_response(processed_message)
+    chat_history.append((message, bot_message))
+    chat_history.append((None, initial_message))
+    chat_history.append((None, list(questions.keys())[0]))
+    return "", chat_history
+
+
+def clear_chatbot(message, chat_history):
+    chat_history.clear()
+    chat_history.append((None, initial_message))
+    chat_history.append((None, list(questions.keys())[0]))
+    return "", chat_history
+
+
 with gr.Blocks() as demo:
     gr.Markdown("""# Financial ChatBot""")
 
-    chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)
-    msg = gr.Textbox()
-    btn = gr.Button(value="Clear")
+    language_options = ["English", "සිංහල"]
+    language_input = gr.Radio(choices=language_options, label="Please select the language you wish to continue")
+    # language_input.change(disable_language_selection, inputs=[language_input], outputs=[language_input])
 
-    def respond(message, chat_history):
-        for item in questions.keys():
-            if questions[item] is None:
-                questions[item] = message
-                break
+    with gr.Column(visible=True) as rowA:
+        questionnaire_english.render()
+        msg = gr.Textbox()
+        btn = gr.Button(value="Clear")
+        btn.click(clear_chatbot, inputs=[msg, questionnaire_english],
+                  outputs=[msg, questionnaire_english])
+        msg.submit(respond, [msg, questionnaire_english],
+                   [msg, questionnaire_english], scroll_to_output=True)
+    with gr.Column(visible=False) as rowB:
+        questionnaire_sinhala.render()
+        msg = gr.Textbox()
+        btn = gr.Button(value="Clear")
+        btn.click(clear_chatbot, inputs=[msg, questionnaire_sinhala],
+                  outputs=[msg, questionnaire_sinhala])
+        msg.submit(respond, [msg, questionnaire_sinhala],
+                   [msg, questionnaire_sinhala], scroll_to_output=True)
 
-        for item in questions.keys():
-            if questions[item] is None:
-                chat_history.append((message, item))
-                time.sleep(1)
-                return "", chat_history
+    language_input.change(filter, language_input, [rowA, rowB])
+    # list(questions.keys())[0]]
 
-        processed_message = form_question()
-        bot_message = chatbot_response(processed_message)
-        chat_history.append((message, bot_message))
-        chat_history.append((None, initial_message))
-        chat_history.append((None, list(questions.keys())[0]))
-        return "", chat_history
-
-    def clear_chatbot(message, chat_history):
-        chat_history.clear()
-        chat_history.append((None, initial_message))
-        chat_history.append((None, list(questions.keys())[0]))
-        return "", chat_history
-
-    btn.click(clear_chatbot, inputs=[msg, chatbot], outputs=[msg, chatbot])
-    msg.submit(respond, [msg, chatbot], [msg, chatbot], scroll_to_output=True)
+    # chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)
 
 if __name__ == "__main__":
     demo.launch()

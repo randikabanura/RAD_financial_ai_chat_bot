@@ -12,9 +12,7 @@ openai.api_key = OPENAI_API_KEY
 messages = [
     {"role": "system",
      "content": "You are an AI specialized in Financial Advice  in context of Sri Lankan investment and"
-                "wealth generation options. Do not answer anything other than Financial Advice"
-                "queries."},
-    {}
+                "wealth generation options."},
 ]
 
 questions = {
@@ -39,36 +37,29 @@ questions = {
     "Do you have any preferences or concerns related to diversifying your investments?": None
 }
 
-initial_message = "Hello! I'm here to support you for investment and financial decision making. I am an AI " \
+initial_message = "Hello! I'm here to support you for investment and financial decision making.\nI am an AI " \
                   "specialized in Financial Advice in context of Sri Lankan investment and wealth generation options. "
 
 
 def form_question():
     formed_question = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
-                      "generation options, for given information as question and answer pairs."
+                      "generation options, for given information as question and answer pairs. Report should consists " \
+                      "of minimum of 500 words and maximum words 1500.\n"
 
-    for key, value in questions.items():
-        if value and value.strip():
-            formed_question = formed_question + "\n" + key + ": " + value
+    for key in questions.keys():
+        if questions[key] is not None:
+            formed_question = formed_question + "\n" + key + ": " + questions[key]
 
     print(formed_question)
     return formed_question
 
 
-def initialize_questions():
-    for key in questions.keys():
-        questions[key] = None
-
-
 def chatbot_response(input):
     if input:
-        messages[1] = ({"role": "user", "content": input})
-        chat = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=messages
-        )
+        messages.append({"role": "user", "content": input})
+        chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
         reply = chat.choices[0].message.content
-        # messages.append({"role": "assistant", "content": reply})
-        initialize_questions()
+        messages.append({"role": "assistant", "content": reply})
         return reply
 
 

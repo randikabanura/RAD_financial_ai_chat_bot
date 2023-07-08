@@ -20,11 +20,38 @@ questions = {
     "Please refer the language you wish to continue?": None,
     "Are you comfortable with higher-risk investments for potentially higher returns, or do you prefer lower-risk "
     "options?": None,
-    "Are you aiming for long-term wealth accumulation, retirement planning, or specific short-term objectives?": None
+    "Are you aiming for long-term wealth accumulation, retirement planning, or specific short-term objectives?": None,
+    "How much capital do you have available for investment?": None,
+    "Are you looking for a one time investment plan or a recursive investment plan?": None,
+    "Are you looking for short-term gains or long-term investment opportunities?": None,
+    "What is your current income level and financial stability": None,
+    "Do you have any existing debts or financial commitments that need to be considered": None,
+    "Are you interested in specific investment types such as real estate, stocks, bonds, mutual funds, or other "
+    "options?": None,
+    "Do you have any specific industries or sectors you want to focus on?": None,
+    "What is your level of knowledge and experience in investment and finance?": None,
+    "Have you invested before or are you a beginner seeking guidance?": None,
+    "Are you interested in incorporating sustainability and social responsibility factors into your investment "
+    "decisions?": None,
+    "Do you prefer investing in companies that align with your values?": None,
+    "Do you have any preferences regarding tax-efficient investment strategies?": None,
+    "Do you have any preferences or concerns related to diversifying your investments?": None
 }
 
-initial_message = "Hello! I'm here to support you for investment and financial decision making. I am an  AI " \
-                  "specialized in Financial Advice  in context of Sri Lankan investment and wealth generation options. "
+initial_message = "Hello! I'm here to support you for investment and financial decision making. I am an AI " \
+                  "specialized in Financial Advice in context of Sri Lankan investment and wealth generation options. "
+
+
+def form_question():
+    formed_question = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
+                      "generation options, for given information as question and answer pairs."
+
+    for key in questions.keys():
+        if questions[key] is not None:
+            formed_question = formed_question + "\n" + key + ": " + questions[key]
+
+    print(formed_question)
+    return formed_question
 
 
 def chatbot_response(input):
@@ -57,7 +84,8 @@ with gr.Blocks() as demo:
                 time.sleep(2)
                 return "", chat_history
 
-        bot_message = chatbot_response(message)
+        processed_message = form_question()
+        bot_message = chatbot_response(processed_message)
         chat_history.append((message, bot_message))
         time.sleep(2)
         return "", chat_history

@@ -49,10 +49,10 @@ with gr.Blocks() as demo:
                 time.sleep(2)
                 return "", chat_history
 
-        # bot_message = chatbot_response(message)
-        # chat_history.append((message, bot_message))
-        # time.sleep(2)
-        # return "", chat_history
+        bot_message = chatbot_response(message)
+        chat_history.append((message, bot_message))
+        time.sleep(2)
+        return "", chat_history
 
 
     msg.submit(respond, [msg, chatbot], [msg, chatbot], scroll_to_output=True)

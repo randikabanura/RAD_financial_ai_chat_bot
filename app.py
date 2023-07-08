@@ -3,7 +3,7 @@ import gradio as gr
 import random
 import time
 
-openai.api_key = "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"
+openai.api_key = ""
 
 messages = [
     {"role": "system", "content": "You are a helpful and kind AI Assistant."},

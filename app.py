@@ -60,16 +60,19 @@ questions_sinhala = {
     "ඔබේ ආයෝජන විවිධාංගීකරණය කිරීම සම්බන්ධයෙන් ඔබට කිසියම් කැමැත්තක් තිබේද?": None
 }
 
-initial_message = "Hello! I'm here to support you for investment and financial decision making.\nI am an AI " \
+initial_message_english = "Hello! I'm here to support you for investment and financial decision making.\nI am an AI " \
                   "specialized in Financial Advice in context of Sri Lankan investment and wealth generation options. "
+initial_message_sinhala = "ආයුබෝවන්! ආයෝජන සහ මූල්‍ය තීරණ ගැනීම සඳහා ඔබට සහාය වීමට මම මෙහි සිටිමි. මම ශ්‍රී ලංකාවේ " \
+                          "ආයෝජන සහ ධන උත්පාදන විකල්පයන් සම්බන්ධයෙන් මූල්‍ය උපදෙස් පිළිබඳ කෘත්‍ය බුද්ධි මෙවලමකි."
 
-language_input = None
-# def disable_language_selection(language_input):
-#     language_input.interactive = False
-#     return language_input
+report_heading_english = "Financial Advice Report \n======================================"
+report_heading_sinhala = "මූල්‍ය උපදෙස් වාර්තාව \n======================================"
 
-questionnaire_english = gr.Chatbot(value=[[None, initial_message], [None, list(questions_english.keys())[0]]], height=600)
-questionnaire_sinhala = gr.Chatbot(value=[[None, initial_message], [None, list(questions_sinhala.keys())[0]]], height=600)
+
+language_input_var = None
+
+questionnaire_english = gr.Chatbot(value=[[None, initial_message_english], [None, list(questions_english.keys())[0]]], height=600)
+questionnaire_sinhala = gr.Chatbot(value=[[None, initial_message_sinhala], [None, list(questions_sinhala.keys())[0]]], height=600)
 
 
 def read_openapi_key():
@@ -86,28 +89,31 @@ def read_openapi_key():
 
 def filter(choice):
     global questions
+    global language_input_var
     if choice == "English":
         questions = questions_english
+        language_input_var = "English"
         return [gr.update(visible=True), gr.update(visible=False)]
     elif choice == "සිංහල":
         questions = questions_sinhala
+        language_input_var = "සිංහල"
         return [gr.update(visible=False), gr.update(visible=True)]
 
 
 def form_question():
     formed_question = ""
-    initial_message_english = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
+    begin_message_english = "Generate a financial advice report in the context of Sri Lankan investment and wealth " \
                               "generation options, for given information as question and answer pairs. Report should " \
                               "consists of minimum of 1000 words and maximum 2000 words.\n"
 
-    initial_message_sinhala = "ප්‍රශ්න සහ පිළිතුරු යුගල වශයෙන් ලබා දී ඇති තොරතුරු සඳහා ශ්‍රී ලංකාවේ ආයෝජන සහ ධන " \
+    begin_message_sinhala = "ප්‍රශ්න සහ පිළිතුරු යුගල වශයෙන් ලබා දී ඇති තොරතුරු සඳහා ශ්‍රී ලංකාවේ ආයෝජන සහ ධන " \
                               "උත්පාදන විකල්පයන් සම්බන්ධයෙන් මුල්‍ය උපදේශන වාර්තාවක් සකස් කරන්න. වාර්තාව අවම වශයෙන් " \
                               "වචන 1000කින් සහ උපරිම වචන 2000කින් සමන්විත විය යුතුය. \n"
 
-    if language_input == 'English':
-        formed_question = initial_message_english
-    elif language_input == 'සිංහල':
-        formed_question = initial_message_sinhala
+    if language_input_var == 'English':
+        formed_question = begin_message_english
+    elif language_input_var == 'සිංහල':
+        formed_question = begin_message_sinhala
 
     for key, value in questions.items():
         if value and value.strip():
@@ -118,8 +124,8 @@ def form_question():
 
 
 def initialize_questions():
-    for key in questions.keys():
-        questions[key] = None
+    global questions
+    questions = {}
 
 
 def chatbot_response(input):
@@ -132,6 +138,12 @@ def chatbot_response(input):
             reply = chat.choices[0].message.content
 
             initialize_questions()
+
+            if language_input_var == 'English':
+                reply = report_heading_english + reply
+            elif language_input_var == 'සිංහල':
+                reply = report_heading_sinhala + reply
+
             return reply
         except Exception as e:
             print(e)
@@ -139,6 +151,12 @@ def chatbot_response(input):
 
 
 def respond(message, chat_history):
+    initial_message = ""
+    if language_input_var == 'English':
+        initial_message = initial_message_english
+    elif language_input_var == 'සිංහල':
+        initial_message = initial_message_sinhala
+
     for item in questions.keys():
         if questions[item] is None:
             questions[item] = message
@@ -159,6 +177,11 @@ def respond(message, chat_history):
 
 
 def clear_chatbot(message, chat_history):
+    initial_message = ""
+    if language_input_var == 'English':
+        initial_message = initial_message_english
+    elif language_input_var == 'සිංහල':
+        initial_message = initial_message_sinhala
     chat_history.clear()
     chat_history.append((None, initial_message))
     chat_history.append((None, list(questions.keys())[0]))
@@ -172,7 +195,7 @@ with gr.Blocks() as demo:
     language_input = gr.Radio(choices=language_options, label="Please select the language you wish to continue")
     # language_input.change(disable_language_selection, inputs=[language_input], outputs=[language_input])
 
-    with gr.Column(visible=True) as rowA:
+    with gr.Column(visible=True) as colA:
         questionnaire_english.render()
         msg = gr.Textbox()
         btn = gr.Button(value="Clear")
@@ -180,7 +203,7 @@ with gr.Blocks() as demo:
                   outputs=[msg, questionnaire_english])
         msg.submit(respond, [msg, questionnaire_english],
                    [msg, questionnaire_english], scroll_to_output=True)
-    with gr.Column(visible=False) as rowB:
+    with gr.Column(visible=False) as colB:
         questionnaire_sinhala.render()
         msg = gr.Textbox()
         btn = gr.Button(value="Clear")
@@ -189,7 +212,7 @@ with gr.Blocks() as demo:
         msg.submit(respond, [msg, questionnaire_sinhala],
                    [msg, questionnaire_sinhala], scroll_to_output=True)
 
-    language_input.change(filter, language_input, [rowA, rowB])
+    language_input.change(filter, language_input, [colA, colB])
     # list(questions.keys())[0]]
 
     # chatbot = gr.Chatbot(value=[[None, initial_message], [None, list(questions.keys())[0]]], height=600)

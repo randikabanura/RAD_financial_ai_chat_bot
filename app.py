@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# import configparser
+import configparser
 import openai
 import gradio as gr
 import time
@@ -79,16 +79,15 @@ questionnaire_sinhala = gr.Chatbot(value=[[None, initial_message_sinhala], [None
 
 
 def read_openapi_key():
-    return None
-    # # Create a ConfigParser object
-    # config = configparser.ConfigParser()
-    # # Read the properties file
-    # config.read('config.properties')
-    # # Get encryption key from properties file
-    # encryption_key = config.get('encryption', 'key')
-    # # Get encrypted value from properties file
-    # encrypted_value = config.get('encrypted', 'value')
-    # return decrypt_value(encryption_key.encode(), encrypted_value)
+    # Create a ConfigParser object
+    config = configparser.ConfigParser()
+    # Read the properties file
+    config.read('config.properties')
+    # Get encryption key from properties file
+    encryption_key = config.get('encryption', 'key')
+    # Get encrypted value from properties file
+    encrypted_value = config.get('encrypted', 'value')
+    return decrypt_value(encryption_key.encode(), encrypted_value)
 
 
 def filter(choice):

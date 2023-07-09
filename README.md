@@ -1,3 +1,9 @@
+---
+title: RAD_financial_ai_chat_bot
+app_file: app.py
+sdk: gradio
+sdk_version: 3.36.1
+---
 # Financial Assistant AI Chatbot With ChatGPT API
 
 Welcome to the Financial Assistant AI Chatbot! This project is a demonstration of how AI Chatbot and ChatGPT can be used together to create a sophisticated and dynamic Financial Assistant AI Chatbot.

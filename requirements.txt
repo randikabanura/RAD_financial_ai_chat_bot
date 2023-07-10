@@ -1,0 +1,5 @@
+configparser~=6.0.0
+openai~=0.27.8
+gradio~=3.36.1
+python-dotenv~=1.0.0
+cryptography~=41.0.1

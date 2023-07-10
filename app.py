@@ -126,10 +126,12 @@ def form_question():
 def initialize_questions():
     global questions_english
     global questions_sinhala
-    for key in questions_english.keys():
-        questions_english[key] = None
-    for key in questions_sinhala.keys():
-        questions_sinhala[key] = None
+    if language_input_var == 'English':
+        for key in questions_english.keys():
+            questions_english[key] = None
+    elif language_input_var == 'සිංහල':
+        for key in questions_sinhala.keys():
+            questions_sinhala[key] = None
 
 
 def chatbot_response(input):
@@ -186,9 +188,11 @@ def clear_chatbot(message, chat_history):
     global questions
     initial_message = ""
     if language_input_var == 'English':
+        initialize_questions()
         initial_message = initial_message_english
         questions = questions_english
     elif language_input_var == 'සිංහල':
+        initialize_questions()
         initial_message = initial_message_sinhala
         questions = questions_sinhala
     chat_history.clear()

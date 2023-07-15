@@ -78,6 +78,13 @@ questionnaire_english = gr.Chatbot(value=[[None, initial_message_english], [None
 questionnaire_sinhala = gr.Chatbot(value=[[None, initial_message_sinhala], [None, list(questions_sinhala.keys())[0]]], height=600)
 
 
+def is_english():
+    global language_input_var
+    if language_input_var == 'සිංහල':
+        return False
+    return True
+
+
 def read_openapi_key():
     # Create a ConfigParser object
     config = configparser.ConfigParser()
@@ -113,9 +120,9 @@ def form_question():
                               "උත්පාදන විකල්පයන් සම්බන්ධයෙන් මුල්‍ය උපදේශන වාර්තාවක් සකස් කරන්න. වාර්තාව අවම වශයෙන් " \
                               "වචන 1000කින් සහ උපරිම වචන 2000කින් සමන්විත විය යුතුය. \n"
 
-    if language_input_var == 'English':
+    if is_english():
         formed_question = begin_message_english
-    elif language_input_var == 'සිංහල':
+    else:
         formed_question = begin_message_sinhala
 
     for key, value in questions.items():
@@ -147,9 +154,9 @@ def chatbot_response(input):
             reply = chat.choices[0].message.content
 
             initialize_questions()
-            if language_input_var == 'English':
+            if is_english():
                 reply = report_heading_english + reply
-            elif language_input_var == 'සිංහල':
+            else:
                 reply = report_heading_sinhala + reply
 
             return reply
@@ -161,10 +168,10 @@ def chatbot_response(input):
 def respond(message, chat_history):
     global questions
     initial_message = ""
-    if language_input_var == 'English':
+    if is_english():
         initial_message = initial_message_english
         questions = questions_english
-    elif language_input_var == 'සිංහල':
+    else:
         initial_message = initial_message_sinhala
         questions = questions_sinhala
 
@@ -190,11 +197,11 @@ def respond(message, chat_history):
 def clear_chatbot(message, chat_history):
     global questions
     initial_message = ""
-    if language_input_var == 'English':
+    if is_english():
         initialize_questions()
         initial_message = initial_message_english
         questions = questions_english
-    elif language_input_var == 'සිංහල':
+    else:
         initialize_questions()
         initial_message = initial_message_sinhala
         questions = questions_sinhala
@@ -211,7 +218,7 @@ with gr.Blocks() as demo:
     language_input = gr.Radio(choices=language_options, label="Please select the language you wish to continue")
     # language_input.change(disable_language_selection, inputs=[language_input], outputs=[language_input])
 
-    with gr.Column(visible=True) as colA:
+    with gr.Column(visible=is_english()) as colA:
         questionnaire_english.render()
         msg = gr.Textbox()
         btn = gr.Button(value="Clear")
@@ -219,7 +226,7 @@ with gr.Blocks() as demo:
                   outputs=[msg, questionnaire_english])
         msg.submit(respond, [msg, questionnaire_english],
                    [msg, questionnaire_english], scroll_to_output=True)
-    with gr.Column(visible=False) as colB:
+    with gr.Column(visible=not is_english()) as colB:
         questionnaire_sinhala.render()
         msg = gr.Textbox()
         btn = gr.Button(value="Clear")
